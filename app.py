@@ -52,12 +52,15 @@ def whatsapp():
 
     if user:
         emergency_contact = EmergencyContact.query.filter_by(user_hashed_id=user.hashed_id).first()
-        
-        if emergency_contact:
-            resp.message("Welcome back! You’re logged in.")
-        else:
-            resp.message("To ensure your safety, please provide an emergency contact (e.g., 0570081720).")
 
+        if incoming_msg.lower() == 'help':
+            resp.message("Here are the available commands:\n- start: Begin a new trip\n- stop: To stop your current trip\n- edit: To edit your user details")
+        elif not emergency_contact:
+            resp.message("To ensure your safety, please provide an emergency contact (e.g., 0570081720.")
+        else:
+            resp.message("Welcome back! You’re logged in. Type start to begin a new trip. To see the various commands type help.")
+            
+    # Auth logic
     else:
         if incoming_msg.lower() == 'sign up':
             resp.message("Please reply with your full name and role (e.g., 'John Doe, passenger').")
@@ -69,12 +72,13 @@ def whatsapp():
                     new_user = User(name=name, role=role, whatsapp_number=from_number)
                     db.session.add(new_user)
                     db.session.commit()
-                    resp.message("Thanks for signing up! You’re now logged in. To ensure your safety, please provide an emergency contact (e.g., 0570081720).")
+                    resp.message("Thanks for signing up! You’re now logged in. To ensure your safety, please provide an emergency contact (e.g., 0570081720.")
                 else:
                     resp.message("There was an error with your signup. Please make sure to include both your name and role separated by a comma.")
             except Exception as e:
                 resp.message("There was an error with your signup. Please format as 'Full Name, role'.")
 
+    # emergency contact logic
     if user and not emergency_contact and incoming_msg.isdigit() and len(incoming_msg) == 10:
         try:
             new_contact = EmergencyContact(user_hashed_id=user.hashed_id, contact_number=incoming_msg)
