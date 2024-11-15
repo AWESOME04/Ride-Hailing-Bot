@@ -31,7 +31,7 @@ class MessageHandler:
             return self._handle_ride_booking_flow(user, incoming_msg, from_number, resp)
 
         active_ride = self.ride_service.get_active_ride(user.hashed_id)
-        if active_ride and incoming_msg.lower() not in ['cancel', 'help', 'status', 'stop']:
+        if active_ride and incoming_msg.lower() not in ['cancel', 'help', 'status', 'end']:
             return self._handle_active_ride(active_ride, incoming_msg, resp)
 
         if incoming_msg.lower() == 'help':
@@ -60,7 +60,7 @@ class MessageHandler:
                             f"Emergency Contact: {contact_number}")
         elif incoming_msg.lower() == 'start':
             if active_ride:
-                resp.message("You already have an active ride. Type 'status' to check its status or 'stop' to cancel it.")
+                resp.message("You already have an active ride. Type 'status' to check its status or 'end' to cancel it.")
             else:
                 emergency_contact = self.emergency_contact_service.get_emergency_contact(user.hashed_id)
                 if not emergency_contact:
@@ -71,9 +71,9 @@ class MessageHandler:
                         'step': 'pickup'
                     }
                     resp.message("Please share your pickup location 📍")
-        elif incoming_msg.lower() == 'stop':
+        elif incoming_msg.lower() == 'end':
             if active_ride:
-                return self._handle_active_ride(active_ride, 'stop', resp)
+                return self._handle_active_ride(active_ride, 'end', resp)
             else:
                 resp.message("You don't have any active rides. Type 'start' to begin a new trip.")
         else:
@@ -144,7 +144,7 @@ class MessageHandler:
         return str(resp)
 
     def _handle_active_ride(self, ride, incoming_msg, resp):
-        if incoming_msg.lower() == 'end' or incoming_msg.lower() == 'stop':
+        if incoming_msg.lower() == 'end':
             if ride.status in ['REQUESTED', 'MATCHED']:
                 success, _ = self.ride_service.update_ride_status(ride, 'CANCELLED')
                 if success:
