@@ -16,3 +16,14 @@ class Ride(db.Model):
     estimated_fare = db.Column(db.Float)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def get_summary(self):
+        return {
+            'id': self.id,
+            'pickup_location': self.pickup_location,
+            'destination': self.destination,
+            'status': self.status,
+            'driver_name': self.driver_name,
+            'estimated_fare': self.estimated_fare,
+            'created_at': self.created_at
+        }
