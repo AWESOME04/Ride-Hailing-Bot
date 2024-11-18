@@ -5,4 +5,4 @@ nixPkgs = ['python3', 'gcc', 'python3.9-venv']
 cmds = ['python -m venv /opt/venv && . /opt/venv/bin/activate && pip install --no-cache-dir -r requirements.txt']
 
 [start]
-cmd = 'source /opt/venv/bin/activate && python app.py'
+cmd = '. /opt/venv/bin/activate && python app.py'
