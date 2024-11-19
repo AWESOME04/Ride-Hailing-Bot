@@ -3,6 +3,7 @@
     python3
     python3Packages.pip
     gcc
+    postgresql
   ];
   buildCommand = ''
     python -m venv /opt/venv
